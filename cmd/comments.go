@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"slices"
+	"strings"
+
+	// "slices"
 	// "strings"
 	"unicode"
 )
@@ -38,7 +40,7 @@ import (
 		return isComment, string(comment)
 	}
 
-	func getComments(fileName string)([]string){
+	func getComments(fileName string, ident string)([]string){
 		var comments []string
 		file, err := os.Open("./" + fileName)
 		if err != nil {
@@ -57,12 +59,15 @@ import (
 					comment += line
 					lastLineComment = true
 				}
-				// if strings.Contains(comment, "TODO"){
-				// 	fmt.Print(comment,"\n")
-				// }
 			} else {
 				if lastLineComment {
-					comments = append(comments, comment)
+					if ident != " "{
+						if strings.Contains(strings.ToLower(comment), strings.ToLower(ident)){
+							comments = append(comments, comment)
+						}
+					} else{
+						comments = append(comments, comment)
+					}
 				}
 				lastLineComment = false
 				comment = ""
@@ -85,21 +90,48 @@ import (
 		return files, nil
 	}
 
-	func printCommentsInDir(exclude []string){
-		files, err := getDirFiles()
+	func getFile(just string)([]string, error){
+		var files []string
+		file, err := os.Open(just)
 		if err != nil {
-			fmt.Print("Something went wrong")
+			fmt.Print(err)
+			return files, err
+		}
+		files = append(files, file.Name())
+
+		return files, nil
+
+	}
+
+	func printCommentsInDir(just string, ident string){
+		var files []string
+		if just != ""{
+			fileList, err := getFile(just)
+			if err != nil {
+				fmt.Print(err)
+			}
+			files = fileList
+		}else{
+			fileList, err := getDirFiles()
+			if err != nil {
+				fmt.Print("Something went wrong")
+			}
+			files = fileList
+
 		}
 		for _,file := range files {
-			if slices.Contains(exclude, file){
-				continue
-			}
-			if comments := getComments(file); len(comments) == 0 {
+			// if just == ""{
+			// 	if file != just{
+			// 		continue
+			// }
+			//
+			// }
+			if comments := getComments(file, ident); len(comments) == 0 {
 			}else {
 				fmt.Println("---------------------")
 				fmt.Println("---------------------")
-				fmt.Println("\n FILE: " + file)
 				fmt.Println("---------------------")
+				fmt.Println("\n FILE: " + file)
 				fmt.Println("---------------------")
 				for _, comment := range comments {
 					fmt.Println(comment)
@@ -112,7 +144,7 @@ import (
 	}
 
 	func printCommentsInFile(fileName string){
-			if comments := getComments(fileName); len(comments) == 0 {
+			if comments := getComments(fileName, ident); len(comments) == 0 {
 			}else {
 				fmt.Println("\n" + fileName + ": ")
 				for _, comment := range comments {

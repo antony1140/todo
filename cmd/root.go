@@ -38,11 +38,12 @@ to quickly create a Cobra application.`,
 	//
 	// 	}
 	// },
-	Run: func(cmd *cobra.Command, args []string){
-		var exclude []string
-		printCommentsInDir(exclude)
-	},
+	// Run: func(cmd *cobra.Command, args []string){
+	// 	var exclude []string
+	// 	printCommentsInDir(exclude)
+	// },
 }
+
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.

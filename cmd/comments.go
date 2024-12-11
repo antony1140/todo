@@ -37,26 +37,36 @@ import (
 		return isComment, string(comment)
 	}
 
-	func listComments(fileName string)(int){
-
+	func listComments(fileName string)([]string){
+		var comments []string
 		file, err := os.Open("./" + fileName)
 		if err != nil {
 			fmt.Print(err)
 		}
 		scanner := bufio.NewScanner(file)
 
-		comments := 0
-		todos := 0
 		for scanner.Scan(){
 			if isComment, comment := isComment(scanner); isComment {
-				comments += 1
+				comments = append(comments, comment)
 				if strings.Contains(comment, "TODO"){
-					todos += 1
 					fmt.Print(comment,"\n")
 				}
 			}
 
 		}
 		return comments
+	}
+
+	func getDirFiles()([]string, error){
+		var files []string
+		dir, err := os.ReadDir(".")
+		if err != nil {
+			fmt.Print(err)
+			return files, err
+		}
+		for _, file := range dir {
+			files = append(files, file.Name())
+		}
+		return files, nil
 	}
 

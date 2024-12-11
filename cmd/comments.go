@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
+	// "strings"
 	"unicode"
-	"strings"
 )
 
 	func isComment(scanner *bufio.Scanner)(bool, string){
@@ -37,20 +38,34 @@ import (
 		return isComment, string(comment)
 	}
 
-	func listComments(fileName string)([]string){
+	func getComments(fileName string)([]string){
 		var comments []string
 		file, err := os.Open("./" + fileName)
 		if err != nil {
 			fmt.Print(err)
 		}
 		scanner := bufio.NewScanner(file)
-
+		lastLineComment := false
+		comment := ""
 		for scanner.Scan(){
-			if isComment, comment := isComment(scanner); isComment {
-				comments = append(comments, comment)
-				if strings.Contains(comment, "TODO"){
-					fmt.Print(comment,"\n")
+			if isComment, line := isComment(scanner); isComment {
+				if lastLineComment {
+					comment += "\n" + line
+					lastLineComment = true
+
+				} else {
+					comment += line
+					lastLineComment = true
 				}
+				// if strings.Contains(comment, "TODO"){
+				// 	fmt.Print(comment,"\n")
+				// }
+			} else {
+				if lastLineComment {
+					comments = append(comments, comment)
+				}
+				lastLineComment = false
+				comment = ""
 			}
 
 		}
@@ -69,4 +84,43 @@ import (
 		}
 		return files, nil
 	}
+
+	func printCommentsInDir(exclude []string){
+		files, err := getDirFiles()
+		if err != nil {
+			fmt.Print("Something went wrong")
+		}
+		for _,file := range files {
+			if slices.Contains(exclude, file){
+				continue
+			}
+			if comments := getComments(file); len(comments) == 0 {
+			}else {
+				fmt.Println("---------------------")
+				fmt.Println("---------------------")
+				fmt.Println("\n FILE: " + file)
+				fmt.Println("---------------------")
+				fmt.Println("---------------------")
+				for _, comment := range comments {
+					fmt.Println(comment)
+					fmt.Println("---------------------")
+				}
+			}
+
+		}
+
+	}
+
+	func printCommentsInFile(fileName string){
+			if comments := getComments(fileName); len(comments) == 0 {
+			}else {
+				fmt.Println("\n" + fileName + ": ")
+				for _, comment := range comments {
+					fmt.Println(comment)
+					fmt.Println("---------------------")
+				}
+			}
+		
+	}
+
 

@@ -4,7 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	// "fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -22,21 +22,25 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		files, err := getDirFiles()
-		if err != nil {
-			fmt.Print("Something went wrong")
-		}
-		for _,file := range files {
-			if comments := listComments(file); len(comments) == 0 {
-			}else {
-				fmt.Println("\n" + file + ": ")
-				for _, comment := range comments {
-					fmt.Println(comment)
-				}
-			}
-
-		}
+	// Run: func(cmd *cobra.Command, args []string) {
+	// 	files, err := getDirFiles()
+	// 	if err != nil {
+	// 		fmt.Print("Something went wrong")
+	// 	}
+	// 	for _,file := range files {
+	// 		if comments := listComments(file); len(comments) == 0 {
+	// 		}else {
+	// 			fmt.Println("\n" + file + ": ")
+	// 			for _, comment := range comments {
+	// 				fmt.Println(comment)
+	// 			}
+	// 		}
+	//
+	// 	}
+	// },
+	Run: func(cmd *cobra.Command, args []string){
+		var exclude []string
+		printCommentsInDir(exclude)
 	},
 }
 
